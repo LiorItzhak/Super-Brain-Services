@@ -1,10 +1,9 @@
 from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_restful import Api
-from api.endpoints.TimelineApi import TimelineApi
-from api.endpoints.ActivityApi import ActivityListApi, ActivityApi
-from api.endpoints.PersonApi import PersonApi, PersonListApi
-from api.endpoints.UserApi import UserListApi,UserApi
+from endpoints.ActivityApi import ActivityListApi, ActivityApi
+from endpoints.PersonApi import PersonApi, PersonListApi
+from endpoints.UserApi import UserListApi,UserApi
 
 app = Flask(__name__)  # Create a Flask WSGI application
 

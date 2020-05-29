@@ -5,4 +5,4 @@ gunicorn
 geopy
 requests
 python-dateutil
-pandas==1.0.3
+pandas==1.0.4
