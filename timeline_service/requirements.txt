@@ -1,0 +1,8 @@
+flask==1.1.2
+flask_restful
+dnspython
+gunicorn
+geopy
+requests
+python-dateutil
+pandas==1.0.3

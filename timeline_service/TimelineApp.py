@@ -1,0 +1,22 @@
+from flask import Flask
+from flask_mongoengine import MongoEngine
+from flask_restful import Api
+from api.endpoints.TimelineApi import TimelineApi
+from api.endpoints.ActivityApi import ActivityListApi, ActivityApi
+from api.endpoints.PersonApi import PersonApi, PersonListApi
+from api.endpoints.UserApi import UserListApi,UserApi
+
+app = Flask(__name__)  # Create a Flask WSGI application
+
+app.config['MONGODB_SETTINGS'] = {
+    'db': 'Db',
+    'host': 'mongodb+srv://admin:1234@cluster0-jabzz.mongodb.net/Db?retryWrites=true&w=majority'
+}
+db = MongoEngine()
+db.init_app(app)
+
+api = Api(app)  # Create a Flask-RESTPlus API
+api.add_resource(TimelineApi, '/timeline/<user_id>')
+
+if __name__ == '__main__':
+    app.run(debug=True)  # Start a development server

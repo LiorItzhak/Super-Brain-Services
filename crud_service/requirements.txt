@@ -1,0 +1,9 @@
+flask==1.1.2
+mongoengine==0.20.0
+flask_restful
+flask_mongoengine
+dnspython
+gunicorn
+requests
+python-dateutil
+pandas==1.0.3
