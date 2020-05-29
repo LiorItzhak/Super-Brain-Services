@@ -2,6 +2,7 @@ from datetime import datetime
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
 from database.data import User
 from flask import request
+import dateutil.parser
 
 user_fields = {
     'id': fields.String(),
@@ -14,8 +15,8 @@ user_fields = {
 
 parser = reqparse.RequestParser()
 parser.add_argument('id', type=str)
-parser.add_argument('creation_timestamp', type=lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f"))
-parser.add_argument('modified_timestamp', type=lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f"))
+parser.add_argument('creation_timestamp', type=lambda x: dateutil.parser.parse(x))
+parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x))
 parser.add_argument('first_name', type=str)
 parser.add_argument('last_name', type=str)
 
