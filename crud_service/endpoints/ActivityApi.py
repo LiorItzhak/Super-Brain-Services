@@ -6,6 +6,7 @@ import dateutil.parser
 from database.data import Activity
 from kafka import KafkaProducer
 import json
+import threading
 
 # datetime.strptime(modified_after, "%Y-%m-%dT%H:%M:%S.%f")
 
@@ -78,10 +79,14 @@ class ActivityListApi(Resource):
 
     @marshal_with(activity_fields)
     def post(self):
+
         activity = Activity(**parser.parse_args())
         if not activity.timestamp:
             activity.timestamp = datetime.now()
         activity.save()
-        topic = f'activity_{activity.user_id}_{activity.type}'
+        print(f'{activity.user_id} {threading.current_thread().ident}')
+
+        topic = f'activity{activity.user_id}{activity.type}'
+        print(topic)
         producer.send(topic, value=marshal(activity,activity_fields))
         return activity

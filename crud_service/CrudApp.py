@@ -3,7 +3,7 @@ from flask_mongoengine import MongoEngine
 from flask_restful import Api
 from endpoints.ActivityApi import ActivityListApi, ActivityApi
 from endpoints.PersonApi import PersonApi, PersonListApi
-from endpoints.UserApi import UserListApi,UserApi
+from endpoints.UserApi import UserListApi, UserApi
 
 app = Flask(__name__)  # Create a Flask WSGI application
 
@@ -21,6 +21,11 @@ api.add_resource(ActivityApi, '/activity/<activity_id>')
 api.add_resource(ActivityListApi, '/activity')
 api.add_resource(UserApi, '/user/<user_id>')
 api.add_resource(UserListApi, '/user')
+
+
+@app.route('/')
+def index():
+    return "CrudApp"
 
 
 if __name__ == '__main__':
