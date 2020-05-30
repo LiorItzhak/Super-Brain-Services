@@ -35,7 +35,7 @@ parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
 producer = KafkaProducer(
-    bootstrap_servers='kafkaserverix6cejqemlysq-vm0.westeurope.cloudapp.azure.com:9092',
+    bootstrap_servers='localhost:9092',
     value_serializer=lambda x: json.dumps(x).encode('utf-8'))
 
 
