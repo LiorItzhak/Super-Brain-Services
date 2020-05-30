@@ -1,10 +1,10 @@
+wheel==0.34.2
 flask==1.1.2
 mongoengine==0.20.0
-flask_restful
-flask_mongoengine
-dnspython
-gunicorn
-requests
-python-dateutil
+Flask-RESTful==0.3.8
+flask-mongoengine==0.9.5
+dnspython==1.16.0
+requests==2.23.0
+python-dateutil==2.8.1
 pandas==1.0.4
-kafka-python
+kafka-python==2.0.1

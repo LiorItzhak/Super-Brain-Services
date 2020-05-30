@@ -3,6 +3,8 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
+    ports:
+      - "2181:2181"
 
   kafka:
     image: wurstmeister/kafka
@@ -13,10 +15,17 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 #      KAFKA_CREATE_TOPICS: "numtest:1:1"
+    depends_on:
+      - zookeeper
 
   crud_service:
+    container_name: crud_service
     build:
       context: .
       dockerfile: dockerfiles/crud.Dockerfile
+    environment:
+      KAFKA_BROKER: kafka:9092
     ports:
       - "5000:5000"
+    depends_on:
+      - kafka

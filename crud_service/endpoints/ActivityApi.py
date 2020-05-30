@@ -1,6 +1,11 @@
+import os
 from datetime import datetime
+from logging import getLogger
+from time import sleep
+
 from flask import request
-from flask_restful import Resource, reqparse, fields, marshal_with,marshal
+from flask_restful import Resource, reqparse, fields, marshal_with, marshal
+from kafka.errors import NoBrokersAvailable
 from mongoengine import Q
 import dateutil.parser
 from database.data import Activity
@@ -24,13 +29,15 @@ parser = reqparse.RequestParser()
 parser.add_argument('id', type=str)
 parser.add_argument('user_id', type=str)
 parser.add_argument('timestamp', type=lambda x: dateutil.parser.parse(x))
-parser.add_argument('creation_timestamp', type=lambda x:  dateutil.parser.parse(x))
-parser.add_argument('modified_timestamp', type=lambda x:  dateutil.parser.parse(x))
+parser.add_argument('creation_timestamp', type=lambda x: dateutil.parser.parse(x))
+parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x))
 parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
-                         value_serializer=lambda x:  json.dumps(x).encode('utf-8'))
+producer = KafkaProducer(
+    bootstrap_servers='kafkaserverix6cejqemlysq-vm0.westeurope.cloudapp.azure.com:9092',
+    value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+
 
 class ActivityApi(Resource):
     @marshal_with(activity_fields)
@@ -76,7 +83,6 @@ class ActivityListApi(Resource):
         page = objs[page * size:page * size + size]
         return list(page)
 
-
     @marshal_with(activity_fields)
     def post(self):
 
@@ -88,5 +94,5 @@ class ActivityListApi(Resource):
 
         topic = f'activity{activity.user_id}{activity.type}'
         print(topic)
-        producer.send(topic, value=marshal(activity,activity_fields))
+        producer.send(topic, value=marshal(activity, activity_fields))
         return activity

@@ -6,6 +6,4 @@ RUN pip3 install -r /code/crud_service/requirements.txt
 RUN chmod +x /code/
 ENV PYTONPATH /code
 
-EXPOSE 5000
-
 CMD [ "python", "./code/crud_service/CrudApp.py"]
