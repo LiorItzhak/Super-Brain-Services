@@ -35,8 +35,13 @@ parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
-    value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    bootstrap_servers="kafka-34f1d98c-sean98goldfarb-28b7.aivencloud.com:10402",
+    value_serializer=lambda x: json.dumps(x).encode('utf-8'),
+    security_protocol="SSL",
+    ssl_cafile="kafka_auth/ca.pem",
+    ssl_certfile="kafka_auth/service.cert",
+    ssl_keyfile="kafka_auth/service.key",
+)
 
 
 class ActivityApi(Resource):
@@ -90,9 +95,5 @@ class ActivityListApi(Resource):
         if not activity.timestamp:
             activity.timestamp = datetime.now()
         activity.save()
-        print(f'{activity.user_id} {threading.current_thread().ident}')
-
-        topic = f'activity{activity.user_id}{activity.type}'
-        print(topic)
-        producer.send(topic, value=marshal(activity, activity_fields))
+        producer.send('activity', value=marshal(activity, activity_fields))
         return activity
