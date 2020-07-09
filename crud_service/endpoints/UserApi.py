@@ -19,7 +19,6 @@ parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('first_name', type=str)
 parser.add_argument('last_name', type=str)
 
-
 class UserApi(Resource):
     @marshal_with(user_fields)
     def get(self, user_id):
