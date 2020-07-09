@@ -8,14 +8,14 @@ from flask_restful import Resource, reqparse, fields, marshal_with, marshal
 from kafka.errors import NoBrokersAvailable
 from mongoengine import Q
 import dateutil.parser
-from database.data import Activity
+from database.data import Event
 from kafka import KafkaProducer
 import json
 import threading
 
 # datetime.strptime(modified_after, "%Y-%m-%dT%H:%M:%S.%f")
 
-activity_fields = {
+event_fields = {
     'id': fields.String(),
     'user_id': fields.String(),
     'timestamp': fields.DateTime(dt_format='iso8601'),
@@ -34,35 +34,35 @@ parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
-producer = KafkaProducer(
-    bootstrap_servers="kafka-34f1d98c-sean98goldfarb-28b7.aivencloud.com:10402",
-    value_serializer=lambda x: json.dumps(x).encode('utf-8'),
-    security_protocol="SSL",
-    ssl_cafile="kafka_auth/ca.pem",
-    ssl_certfile="kafka_auth/service.cert",
-    ssl_keyfile="kafka_auth/service.key",
-)
+# producer = KafkaProducer(
+#     bootstrap_servers="kafka-34f1d98c-sean98goldfarb-28b7.aivencloud.com:10402",
+#     value_serializer=lambda x: json.dumps(x).encode('utf-8'),
+#     security_protocol="SSL",
+#     ssl_cafile="kafka_auth/ca.pem",
+#     ssl_certfile="kafka_auth/service.cert",
+#     ssl_keyfile="kafka_auth/service.key",
+# )
 
 
-class ActivityApi(Resource):
-    @marshal_with(activity_fields)
-    def get(self, activity_id):
-        return Activity.objects().get(id=activity_id)
+class EventApi(Resource):
+    @marshal_with(event_fields)
+    def get(self, event_id):
+        return Event.objects().get(id=event_id)
 
-    @marshal_with(activity_fields)
-    def delete(self, activity_id):
-        return Activity.objects().get(id=activity_id)
+    @marshal_with(event_fields)
+    def delete(self, event_id):
+        return Event.objects().get(id=event_id)
 
-    @marshal_with(activity_fields)
-    def put(self, activity_id):
-        activity = Activity(**parser.parse_args())
-        activity.id = activity_id
-        activity.save()
-        return activity
+    @marshal_with(event_fields)
+    def put(self, event_id):
+        event = Event(**parser.parse_args())
+        event.id = event_id
+        event.save()
+        return event
 
 
-class ActivityListApi(Resource):
-    @marshal_with(activity_fields)
+class EventListApi(Resource):
+    @marshal_with(event_fields)
     def get(self):
         modified_after = request.args.get('modified_after', None)
         if modified_after: modified_after = dateutil.parser.parse(modified_after)
@@ -74,13 +74,13 @@ class ActivityListApi(Resource):
         if to_timestamp: to_timestamp = dateutil.parser.parse(to_timestamp)
 
         user_id = request.args.get('user_id', None)
-        activity_type = request.args.get('type', None)
+        event_type = request.args.get('type', None)
         page = int(request.args.get('page', 0))
         size = int(request.args.get('size', 10))
 
-        objs = Activity.objects
+        objs = Event.objects
         if user_id: objs = objs.filter(Q(user_id=user_id))
-        if activity_type: objs = objs.filter(Q(type=activity_type))
+        if event_type: objs = objs.filter(Q(type=event_type))
         if modified_after:  objs = objs.filter(Q(modified_timestamp__gt=modified_after))
         if created_on:  objs = objs.filter(Q(creation_timestamp=created_on))
         if to_timestamp:  objs = objs.filter(Q(timestamp__lte=to_timestamp))
@@ -88,12 +88,12 @@ class ActivityListApi(Resource):
         page = objs[page * size:page * size + size]
         return list(page)
 
-    @marshal_with(activity_fields)
+    @marshal_with(event_fields)
     def post(self):
 
-        activity = Activity(**parser.parse_args())
-        if not activity.timestamp:
-            activity.timestamp = datetime.now()
-        activity.save()
-        producer.send('activity', value=marshal(activity, activity_fields))
-        return activity
+        event = Event(**parser.parse_args())
+        if not event.timestamp:
+            event.timestamp = datetime.now()
+        event.save()
+        # producer.send('event', value=marshal(event, event_fields))
+        return event

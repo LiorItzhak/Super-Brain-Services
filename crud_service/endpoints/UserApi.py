@@ -10,7 +10,6 @@ user_fields = {
     'modified_timestamp': fields.DateTime(dt_format='iso8601'),
     'first_name': fields.String(),
     'last_name': fields.String(),
-
 }
 
 parser = reqparse.RequestParser()

@@ -13,5 +13,5 @@ RUN chmod +x /code/
 ENV PYTONPATH /code
 
 #CMD [ "gunicorn","-w 4", "./code/reactive_service/ReactiveApp.py:app"]
-
-CMD [ "gunicorn","./code/reactive_service/ReactiveApp.py:app","--bind 0.0.0.0:1337","--worker-class sanic.worker.GunicornWorker"]
+#CMD [ "python", "./code/reactive_service/ReactiveApp.py"]
+CMD [ "gunicorn","./code/reactive_service/ReactiveApp.py:app","--bind 0.0.0.0:8000","--worker-class sanic.worker.GunicornWorker"]

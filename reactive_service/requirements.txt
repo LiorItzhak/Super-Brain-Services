@@ -1,3 +1,7 @@
-sanic
+# sanic
 kafka-python
-gunicorn
+# gunicorn
+# sanic-gunicorn
+# uvloop
+flask-sse
+gevent
