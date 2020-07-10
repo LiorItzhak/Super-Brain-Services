@@ -1,11 +1,34 @@
 
-crud: crud_build crud_deploy
+redeploy_all: build_all deploy_all
 
-crud_create:
-	az container create --image superbrain.azurecr.io/crud:latest --resource-group Super-Brain --name crud-server --ports 5000 --ip-address Public --registry-username superbrain --registry-password V6SxizYaaZi4=j4OoEGttIkKdWWv4dQG
+build_all: crud_build timeline_build
+create_all: crud_create timeline_create
+deploy_all: crud_deploy timeline_deploy
+
+redeploy_crud: crud_build crud_deploy
+redeploy_timeline: timeline_build timeline_deploy
+
+get_cluster:
+	gcloud container clusters get-credentials super-brain --region us-central1 --project superbrain-282909
 
 crud_build:
-	az acr build --image crud --registry superbrain --file dockerfiles/crud.Dockerfile .
+	docker build -t crud -f dockerfiles/crud.Dockerfile .
+	docker tag crud gcr.io/superbrain-282909/crud
+	docker push gcr.io/superbrain-282909/crud
 
-crud_redeploy:
-	az container restart --resource-group Super-Brain --name crud-server
+timeline_build:
+	docker build -t timeline -f dockerfiles/timeline.Dockerfile .
+	docker tag timeline gcr.io/superbrain-282909/timeline
+	docker push gcr.io/superbrain-282909/timeline
+
+crud_create: get_cluster
+	kubectl apply -f kubernetes/crud.yaml
+
+crud_deploy: get_cluster
+	kubectl patch deployment crud -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"
+
+timeline_create: get_cluster
+	kubectl apply -f kubernetes/timeline.yaml
+
+timeline_deploy: get_cluster
+	kubectl patch deployment timeline -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"date\":\"`date +'%s'`\"}}}}}"

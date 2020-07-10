@@ -1,4 +1,5 @@
 import os
+import pathlib
 from datetime import datetime
 from logging import getLogger
 from time import sleep
@@ -34,13 +35,14 @@ parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
+path = pathlib.Path(__file__).parent.parent.absolute()
 producer = KafkaProducer(
     bootstrap_servers="kafka-34f1d98c-sean98goldfarb-28b7.aivencloud.com:10402",
     value_serializer=lambda x: json.dumps(x).encode('utf-8'),
     security_protocol="SSL",
-    ssl_cafile="kafka_auth/ca.pem",
-    ssl_certfile="kafka_auth/service.cert",
-    ssl_keyfile="kafka_auth/service.key",
+    # ssl_cafile=path.joinpath("kafka_auth/ca.pem"),
+    # ssl_certfile=path.joinpath("kafka_auth/service.cert"),
+    # ssl_keyfile=path.joinpath("kafka_auth/service.key"),
 )
 
 
