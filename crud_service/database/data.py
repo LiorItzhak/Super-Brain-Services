@@ -13,7 +13,7 @@ class Person(Document):
 
     def save(self, *args, **kwargs):
         if self.id:
-            self.creation_timestamp = Activity.objects.get(id=self.id).creation_timestamp
+            self.creation_timestamp = Event.objects.get(id=self.id).creation_timestamp
         if not self.creation_timestamp:
             self.creation_timestamp = datetime.now()
         self.modified_timestamp = datetime.now()
@@ -27,7 +27,7 @@ class Person(Document):
         return super(Person, self).update(**p_dict)
 
 
-class Activity(Document):
+class Event(Document):
     timestamp = DateTimeField()
     creation_timestamp = DateTimeField()
     modified_timestamp = DateTimeField(default=datetime.now)
@@ -37,12 +37,11 @@ class Activity(Document):
 
     def save(self, *args, **kwargs):
         if self.id:
-            self.creation_timestamp = Activity.objects.get(id=self.id).creation_timestamp
+            self.creation_timestamp = Event.objects.get(id=self.id).creation_timestamp
         if not self.creation_timestamp:
             self.creation_timestamp = datetime.now()
         self.modified_timestamp = datetime.now()
-        return super(Activity, self).save(*args, **kwargs)
-
+        return super(Event, self).save(*args, **kwargs)
 
 
 class User(Document):
@@ -53,7 +52,7 @@ class User(Document):
 
     def save(self, *args, **kwargs):
         if self.id:
-            self.creation_timestamp = Activity.objects.get(id=self.id).creation_timestamp
+            self.creation_timestamp = Event.objects.get(id=self.id).creation_timestamp
         if not self.creation_timestamp:
             self.creation_timestamp = datetime.now()
         self.modified_timestamp = datetime.now()
@@ -67,5 +66,20 @@ class User(Document):
         return super(User, self).update(**p_dict)
 
 
+class Notification(Document):
+    timestamp = DateTimeField(default=None)
+    creation_timestamp = DateTimeField()
+    modified_timestamp = DateTimeField(default=datetime.now)
+    user_id = StringField(required=True)
+    type = StringField()
+    data = DictField(required=False)
+    is_active = BooleanField(default=True),
+    notes = StringField(required=False)
 
-
+    def save(self, *args, **kwargs):
+        if self.id:
+            self.creation_timestamp = Event.objects.get(id=self.id).creation_timestamp
+        if not self.creation_timestamp:
+            self.creation_timestamp = datetime.now()
+        self.modified_timestamp = datetime.now()
+        return super(Notification, self).save(*args, **kwargs)

@@ -10,7 +10,6 @@ user_fields = {
     'modified_timestamp': fields.DateTime(dt_format='iso8601'),
     'first_name': fields.String(),
     'last_name': fields.String(),
-
 }
 
 parser = reqparse.RequestParser()
@@ -19,7 +18,6 @@ parser.add_argument('creation_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x))
 parser.add_argument('first_name', type=str)
 parser.add_argument('last_name', type=str)
-
 
 class UserApi(Resource):
     @marshal_with(user_fields)
