@@ -1,20 +1,11 @@
-import os
-import pathlib
+import json
 from datetime import datetime
-from logging import getLogger
-from time import sleep
-
 from flask import request
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
-from kafka.errors import NoBrokersAvailable
+from kafka import KafkaProducer
 from mongoengine import Q
 import dateutil.parser
 from database.data import Event
-from kafka import KafkaProducer
-import json
-import threading
-
-# datetime.strptime(modified_after, "%Y-%m-%dT%H:%M:%S.%f")
 
 event_fields = {
     'id': fields.String(),
@@ -34,6 +25,16 @@ parser.add_argument('creation_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x))
 parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
+
+producer = KafkaProducer(
+    bootstrap_servers=['kafka-demo-parametrix-b70f.aivencloud.com:12744'],
+    value_serializer=lambda x: json.dumps(x).encode('utf-8'),
+    security_protocol="SSL",
+    ssl_cafile="kafka_auth/ca.pem",
+    ssl_certfile="kafka_auth/service.cert",
+    ssl_keyfile="kafka_auth/service.key",
+    api_version=(2, 5),
+)
 
 
 
@@ -88,5 +89,8 @@ class EventListApi(Resource):
         if not event.timestamp:
             event.timestamp = datetime.now()
         event.save()
-        # producer.send('event', value=marshal(event, event_fields))
+        try:
+            producer.send('event', value=marshal(event, event_fields))
+        except Exception as e:
+            print(type(e), e)
         return event

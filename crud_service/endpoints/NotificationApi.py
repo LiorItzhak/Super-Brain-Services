@@ -1,15 +1,8 @@
-import os
-from datetime import datetime
-from logging import getLogger
-from time import sleep
 from flask import request
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
-from kafka.errors import NoBrokersAvailable
 from mongoengine import Q
 import dateutil.parser
 from database.data import Notification
-import json
-
 
 notification_fields = {
     'id': fields.String(),

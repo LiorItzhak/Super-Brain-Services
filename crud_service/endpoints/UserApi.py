@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
 from database.data import User
 from flask import request
