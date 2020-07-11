@@ -2,6 +2,8 @@ from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_restful import Api
 from endpoints.EventApi import EventListApi, EventApi
+from endpoints.NotificationApi import NotificationListApi, NotificationApi
+
 from endpoints.PersonApi import PersonApi, PersonListApi
 from endpoints.UserApi import UserListApi, UserApi
 
@@ -21,7 +23,8 @@ api.add_resource(EventApi, '/event/<event_id>')
 api.add_resource(EventListApi, '/event')
 api.add_resource(UserApi, '/user/<user_id>')
 api.add_resource(UserListApi, '/user')
-
+api.add_resource(NotificationApi, '/notification/<notification_id>')
+api.add_resource(NotificationListApi, '/notification')
 
 @app.route('/')
 def index():

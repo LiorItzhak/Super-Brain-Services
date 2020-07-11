@@ -1,15 +1,18 @@
 
-redeploy_all: build_all deploy_all
+redeploy_all: build_all deploy_all show_pods
 
 build_all: crud_build timeline_build
 create_all: crud_create timeline_create
 deploy_all: crud_deploy timeline_deploy
 
-redeploy_crud: crud_build crud_deploy
-redeploy_timeline: timeline_build timeline_deploy
+redeploy_crud: crud_build crud_deploy show_pods
+redeploy_timeline: timeline_build timeline_deploy show_pods
 
 get_cluster:
 	gcloud container clusters get-credentials super-brain --region us-central1 --project superbrain-282909
+
+show_pods: get_cluster
+	kubectl get pods
 
 crud_build:
 	docker build -t crud -f dockerfiles/crud.Dockerfile .

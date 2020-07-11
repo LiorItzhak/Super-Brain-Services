@@ -1,8 +1,15 @@
+import os
+from datetime import datetime
+from logging import getLogger
+from time import sleep
 from flask import request
 from flask_restful import Resource, reqparse, fields, marshal_with, marshal
+from kafka.errors import NoBrokersAvailable
 from mongoengine import Q
 import dateutil.parser
 from database.data import Notification
+import json
+
 
 notification_fields = {
     'id': fields.String(),
@@ -58,6 +65,9 @@ class NotificationListApi(Resource):
         if to_timestamp: to_timestamp = dateutil.parser.parse(to_timestamp)
 
         is_active = request.args.get('is_active', None)
+        if is_active is not None:
+            is_active = is_active.lower() == 'true'
+
         user_id = request.args.get('user_id', None)
         notification_type = request.args.get('type', None)
         page = int(request.args.get('page', 0))
@@ -70,7 +80,7 @@ class NotificationListApi(Resource):
         if created_on:  objs = objs.filter(Q(creation_timestamp=created_on))
         if to_timestamp:  objs = objs.filter(Q(timestamp__lte=to_timestamp))
         if from_timestamp:  objs = objs.filter(Q(timestamp__gte=from_timestamp))
-        if is_active: objs = objs.filter(Q(is_active=from_timestamp))
+        if is_active is not None: objs = objs.filter(Q(is_active=is_active))
         page = objs[page * size:page * size + size]
         return list(page)
 

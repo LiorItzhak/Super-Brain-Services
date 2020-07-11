@@ -17,8 +17,6 @@ spec:
           image: gcr.io/superbrain-282909/crud:latest
           ports:
             - containerPort: 5000
-      imagePullSecrets:
-        - name: superbrainkey
 ---
 apiVersion: v1
 kind: Service
