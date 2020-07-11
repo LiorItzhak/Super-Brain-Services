@@ -39,7 +39,7 @@ class UserApi(Resource):
 class UserListApi(Resource):
     @marshal_with(user_fields)
     def get(self):
-        user_id = request.args.get('user_id')
+        user_id = request.args.get('user_id', None)
         page = int(request.args.get('page', 0))
         size = int(request.args.get('size', 10))
         objs = User.objects

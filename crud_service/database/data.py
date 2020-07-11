@@ -73,12 +73,12 @@ class Notification(Document):
     user_id = StringField(required=True)
     type = StringField()
     data = DictField(required=False)
-    is_active = BooleanField(default=True),
+    is_active = BooleanField(default=True)
     notes = StringField(required=False)
 
     def save(self, *args, **kwargs):
         if self.id:
-            self.creation_timestamp = Event.objects.get(id=self.id).creation_timestamp
+            self.creation_timestamp = Notification.objects.get(id=self.id).creation_timestamp
         if not self.creation_timestamp:
             self.creation_timestamp = datetime.now()
         self.modified_timestamp = datetime.now()
