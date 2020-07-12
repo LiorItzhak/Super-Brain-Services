@@ -15,17 +15,23 @@ import math
 from pandas.api.indexers import BaseIndexer
 # TODO create separate micro-service
 # baseurl = 'http://127.0.0.1:5000/activity'
-baseurl = 'http://crud:5000/event'
+baseurl = 'http://34.71.217.0:5000/event'
+# baseurl = 'http://crud:5000/event'
 
 
 class TimelineApi(Resource):
 
     def get(self, user_id):
-        date = request.args.get('date')
-        from_timestamp = dateutil.parser.parse(date).date()
+        date = request.args.get('date', None)
+        if date is None:
+            from_timestamp = datetime.now().date()
+        else:
+            from_timestamp = dateutil.parser.parse(date).date()
         to_timestamp = (from_timestamp + timedelta(days=1))
 
         location_df = self.get_location_events(user_id, from_timestamp, to_timestamp)
+        if location_df is None:
+            return []
         person_df = self.get_person_activities(user_id, from_timestamp, to_timestamp)
 
         location_df.loc[:, 'person_list'] = location_df.apply(
@@ -107,7 +113,7 @@ class TimelineApi(Resource):
         df.loc[:, 'distance_prv_mean_m'] = df.apply(
             lambda x: geodesic((x['lat'], x['lng']), (x['prv_mean_lat'], x['prv_mean_lng'])).m, axis=1)
         df.loc[:, 'deltatime_s'] = (
-                    (df.loc[:, 'timestamp'] - df.loc[:, 'prv_timestamp']) / np.timedelta64(1, 's')).abs()
+                (df.loc[:, 'timestamp'] - df.loc[:, 'prv_timestamp']) / np.timedelta64(1, 's')).abs()
         df.loc[:, 'distance_m'] = df.apply(lambda x: geodesic((x['lat'], x['lng']), (x['prv_lat'], x['prv_lng'])).m,
                                            axis=1)
 
@@ -175,7 +181,7 @@ class TimelineApi(Resource):
             'distance_m_sum': 'sum', 'duration_sec': 'sum'
 
         })
-        # calulate address for standing records (using reverse geocoder)
+        # calculate address for standing records (using reverse geocoder)
         dff.loc[:, 'address'] = dff.apply(
             lambda x: geolocator.reverse((x['lat_mean'], x['lng_mean'])).address if x['is_standing'] is True else None,
             axis=1)
