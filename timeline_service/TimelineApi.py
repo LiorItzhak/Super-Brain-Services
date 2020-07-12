@@ -15,8 +15,8 @@ import math
 from pandas.api.indexers import BaseIndexer
 # TODO create separate micro-service
 # baseurl = 'http://127.0.0.1:5000/activity'
-# baseurl = 'http://34.71.217.0:5000/event'
-baseurl = 'http://crud:5000/event'
+baseurl = 'http://34.71.217.0:5000/event'
+# baseurl = 'http://crud:5000/event'
 
 
 class TimelineApi(Resource):
@@ -54,10 +54,8 @@ class TimelineApi(Resource):
                                                'from_timestamp': from_timestamp.isoformat(),
                                                'to_timestamp': to_timestamp.isoformat()}).json()
 
-        person_activities = [r for r in response if {'person_id'} <= r['data'].keys() or {'id'} <= r['data'].keys()]
-        person_activities = [
-            [a["user_id"], dateutil.parser.parse(a["timestamp"]), a["data"].get("person_id", a["data"]["id"])] for a in
-            person_activities]
+        person_activities = [r for r in response if {'person_id'} <= r['data'].keys()]
+        person_activities = [ [a["user_id"], dateutil.parser.parse(a["timestamp"]), a["data"].get("person_id")] for a in person_activities]
 
         df = pd.DataFrame(person_activities, columns=['user_id', 'timestamp', "person_id"])
         return df
