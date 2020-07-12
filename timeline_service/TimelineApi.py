@@ -15,8 +15,8 @@ import math
 from pandas.api.indexers import BaseIndexer
 # TODO create separate micro-service
 # baseurl = 'http://127.0.0.1:5000/activity'
-baseurl = 'http://34.71.217.0:5000/event'
-# baseurl = 'http://crud:5000/event'
+# baseurl = 'http://34.71.217.0:5000/event'
+baseurl = 'http://crud:5000/event'
 
 
 class TimelineApi(Resource):
