@@ -5,6 +5,7 @@ from flask_restful import Resource, reqparse, fields, marshal_with, marshal
 from kafka import KafkaProducer
 from mongoengine import Q
 import dateutil.parser
+from pathlib import Path
 from database.data import Event
 
 event_fields = {
@@ -26,13 +27,14 @@ parser.add_argument('modified_timestamp', type=lambda x: dateutil.parser.parse(x
 parser.add_argument('type', type=str)
 parser.add_argument('data', type=dict)
 
+basePath = Path(__file__).parent.parent / 'kafka_auth'
 producer = KafkaProducer(
     bootstrap_servers=['kafka-demo-parametrix-b70f.aivencloud.com:12744'],
     value_serializer=lambda x: json.dumps(x).encode('utf-8'),
     security_protocol="SSL",
-    ssl_cafile="kafka_auth/ca.pem",
-    ssl_certfile="kafka_auth/service.cert",
-    ssl_keyfile="kafka_auth/service.key",
+    ssl_cafile= basePath / "ca.pem",
+    ssl_certfile=basePath / "service.cert",
+    ssl_keyfile=basePath / "service.key",
     api_version=(2, 5),
 )
 

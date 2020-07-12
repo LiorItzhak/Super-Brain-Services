@@ -15,7 +15,6 @@ import math
 from pandas.api.indexers import BaseIndexer
 # TODO create separate micro-service
 # baseurl = 'http://127.0.0.1:5000/activity'
-# baseurl = 'http://127.0.0.1:5000/activity'
 baseurl = 'http://crud:5000/event'
 
 
